@@ -1,0 +1,147 @@
+/* ===================================================== Nightseed light == */
+/* The light side of the "auto" style: white cards on a soft grey canvas, the
+   same shapes, icons and state colours, with the colours deepened enough to
+   read on white. nightseed.sh replaces __LIGHT__ with the selector for light
+   mode (the WebUI's Color scheme option: Auto follows the device). */
+
+__LIGHT__ {
+    --ns-canvas: #F2F2F7;
+    --ns-card: #FFFFFF;
+    --ns-card-raised: #F6F6F9;
+    --ns-input: #EBEBF0;
+    --ns-input-hover: #E0E0E6;
+    --ns-selection: #DFDFE6;
+    --ns-hover: #EAEAF0;
+    --ns-divider: #E2E2E7;
+    --ns-text: #1C1C1E;
+    --ns-text-2: #6C6C70;
+    --ns-text-off: #AEAEB2;
+    --ns-green: #1E9443;
+    --ns-blue: #0A74C2;
+    --ns-purple: #7B4CD8;
+    --ns-grey: #86868B;
+    --ns-red: #D63A2F;
+    --ns-orange: #C26A00;
+    --ns-control: #2F6FD6;
+    --ns-progress-off: linear-gradient(90deg, #8E8E93, #A1A1A6);
+    --ns-progress-off-text: #FFFFFF;
+    --ns-groove: rgb(0 0 0 / 0.07);
+    --ns-alt-row: rgb(0 0 0 / 0.022);
+
+    --ns-text-soft: #3A3A3C;
+    --ns-text-3: #48484A;
+    --ns-separator: #E2E2E7;
+    --ns-scroll: #C7C7CC;
+    --ns-scroll-hover: #AEAEB2;
+    --ns-focus-border: #A1A1A6;
+    --ns-pressed: #D2D2D8;
+    --ns-tool-hover: #EFEFF4;
+    --ns-tool-pressed: #E3E3E9;
+    --ns-tab-hover: #ECECF1;
+    --ns-filter-hover: #F1F1F5;
+    --ns-ring: rgb(0 0 0 / 0.07);
+    --ns-popup-shadow: rgb(0 0 0 / 0.14);
+    --ns-dialog-shadow: rgb(0 0 0 / 0.2);
+    --ns-login-shadow: rgb(0 0 0 / 0.12);
+    --ns-log-info: #0A7EA4;
+    --ns-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236C6C70'%3E%3Cpath d='M8.12 9.29 12 13.17l3.88-3.88a1 1 0 1 1 1.41 1.41l-4.59 4.59a1 1 0 0 1-1.41 0L6.7 10.7a1 1 0 0 1 1.42-1.41z'/%3E%3C/svg%3E");
+
+    --color-text-blue: #0A6CC4;
+    --color-text-white: #FFFFFF;
+
+    color-scheme: light;
+}
+
+/* the downloading / seeding row colours of the Alternative bars, deepened too */
+__LIGHT__ {
+    --ns-row-dl: var(--ns-green);
+    --ns-row-up: var(--ns-blue);
+}
+
+/* pop-ups are white cards with a soft shadow rather than grey slabs */
+__LIGHT__ #desktopNavbar li ul,
+__LIGHT__ .contextMenu,
+__LIGHT__ .contextMenu li ul {
+    background-color: var(--ns-card);
+    border-color: var(--ns-ring);
+}
+
+__LIGHT__ #desktopNavbar li ul li a:hover,
+__LIGHT__ #desktopNavbar li ul li div.anchor:hover,
+__LIGHT__ .contextMenu li a:hover {
+    background-color: var(--ns-input);
+}
+
+__LIGHT__ #desktopNavbar > ul > li > a {
+    color: var(--ns-text-soft);
+}
+
+/* the toolbar's regex toggle, when on, keeps white text on blue */
+__LIGHT__ #torrentsFilterRegexBox:checked + label {
+    filter: none;
+}
+
+/* the filter box's magnifier is a light-grey image: swap in a dark one */
+__LIGHT__ #torrentsFilterInput,
+__LIGHT__ #searchInNameFilter,
+__LIGHT__ #filterTextInput {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236C6C70'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16a6.47 6.47 0 0 0 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14'/%3E%3C/svg%3E");
+}
+
+/* colour-coded icons: the bright tints made for a dark canvas, deepened a little */
+__LIGHT__ :is(#mochaToolbar, .filterList, .filterTitle, .contextMenu, #desktopNavbar, #desktopFooter, .tab-menu, .mochaContent) img:not(.flags) {
+    filter: brightness(0.86) saturate(1.15);
+}
+
+/* toolbar buttons: the hover and pressed highlight moves from the icon to the
+   button around it, because the filter that darkens a white icon would darken
+   a highlight painted on the icon too */
+__LIGHT__ #mochaToolbar a:has(> .mochaToolButton),
+__LIGHT__ #mochaToolbar label:has(> .mochaToolButton) {
+    border-radius: 8px;
+    display: inline-flex;
+    transition: background-color 0.12s;
+    vertical-align: middle;
+}
+
+__LIGHT__ #mochaToolbar :is(a, label) > .mochaToolButton {
+    margin-right: 0;
+}
+
+__LIGHT__ #mochaToolbar :is(a, label):has(> .mochaToolButton) {
+    margin-right: 2px;
+}
+
+__LIGHT__ #mochaToolbar :is(a, label):hover > .mochaToolButton,
+__LIGHT__ #mochaToolbar :is(a, label):active > .mochaToolButton {
+    background-color: transparent;
+}
+
+__LIGHT__ #mochaToolbar :is(a, label):has(> .mochaToolButton):hover {
+    background-color: var(--ns-tool-hover);
+}
+
+__LIGHT__ #mochaToolbar :is(a, label):has(> .mochaToolButton):active {
+    background-color: var(--ns-tool-pressed);
+}
+
+__LIGHT__ .contextMenu img.highlightedCategoryIcon {
+    filter: none;
+}
+
+/* the dialog shadow and the login card read better a touch lighter */
+__LIGHT__ .mocha {
+    box-shadow: 0 0 0 1px var(--ns-ring), 0 18px 50px var(--ns-dialog-shadow);
+}
+
+__LIGHT__ #modalOverlay {
+    background-color: #1C1C1E;
+}
+
+__LIGHT__ body:has(#loginform) #main {
+    box-shadow: 0 0 0 1px var(--ns-ring), 0 24px 60px var(--ns-login-shadow);
+}
+
+/* the white and light-grey icons (toolbar, menus, sidebar titles…) would vanish
+   on white: nightseed.sh lists them here by name and turns them dark grey */
+__NEUTRAL_ICONS__

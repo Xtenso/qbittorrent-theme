@@ -1,13 +1,16 @@
-# Publishes the four theme files (Nightseed, Alternative, OLED, Transparent) as a new GitHub
-# release whenever any committed file changes on main. Older releases are kept; these links
-# always serve the newest:
+# Publishes the four theme files (Nightseed, Alternative, OLED, Transparent) and the WebUI
+# package as a new GitHub release whenever any of them changes on main. Older releases are
+# kept; these links always serve the newest:
 # https://github.com/Xtenso/qbittorrent-theme/releases/latest/download/Nightseed.qbtheme
 # https://github.com/Xtenso/qbittorrent-theme/releases/latest/download/Nightseed-Alternative.qbtheme
 # https://github.com/Xtenso/qbittorrent-theme/releases/latest/download/Nightseed-OLED.qbtheme
 # https://github.com/Xtenso/qbittorrent-theme/releases/latest/download/Nightseed-Transparent.qbtheme
+# https://github.com/Xtenso/qbittorrent-theme/releases/latest/download/Nightseed-WebUI.zip
 #
-# It publishes the files exactly as committed, so rebuild them first
-# (python tools/build_theme.py) after changing source/.
+# It publishes the theme files exactly as committed, so rebuild them first
+# (python tools/build_theme.py) after changing source/. The WebUI package is zipped here
+# from webui/ and source/icons, byte for byte the same when they haven't changed, so an
+# unrelated push doesn't publish a release.
 
 name: Release theme
 
@@ -19,6 +22,8 @@ on:
       - Nightseed-Alternative.qbtheme
       - Nightseed-OLED.qbtheme
       - Nightseed-Transparent.qbtheme
+      - webui/**
+      - source/icons/**
       - .github/workflows/release.yml
   workflow_dispatch: # "Run workflow" button on the Actions tab
 
@@ -35,20 +40,39 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       GH_REPO: ${{ github.repository }}
-      ASSETS: Nightseed.qbtheme Nightseed-Alternative.qbtheme Nightseed-OLED.qbtheme Nightseed-Transparent.qbtheme
+      THEMES: Nightseed.qbtheme Nightseed-Alternative.qbtheme Nightseed-OLED.qbtheme Nightseed-Transparent.qbtheme
+      ASSETS: Nightseed.qbtheme Nightseed-Alternative.qbtheme Nightseed-OLED.qbtheme Nightseed-Transparent.qbtheme Nightseed-WebUI.zip
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # all history and tags, for the version check and the notes
 
-      - name: Check the files are Qt resource bundles
+      - name: Check the theme files are Qt resource bundles
         run: |
-          for asset in $ASSETS; do
+          for asset in $THEMES; do
             if [ "$(head -c 4 "$asset")" != "qres" ]; then
               echo "::error::$asset is not a Qt binary resource file"
               exit 1
             fi
           done
+
+      # The package unzips into the two folders the linuxserver image setup uses (see
+      # webui/README.md). Fixed timestamps and modes, a sorted file list and no extra
+      # fields make the zip identical from run to run while its contents stay the same.
+      - name: Build the WebUI package
+        run: |
+          set -euo pipefail
+          pkg="$RUNNER_TEMP/webui-pkg"
+          mkdir -p "$pkg/nightseed-src/parts" "$pkg/custom-cont-init.d"
+          cp webui/core.css "$pkg/nightseed-src/"
+          cp webui/parts/*.css "$pkg/nightseed-src/parts/"
+          cp -r source/icons "$pkg/nightseed-src/icons"
+          echo nightseed > "$pkg/nightseed-src/style"
+          cp webui/nightseed.sh "$pkg/custom-cont-init.d/nightseed.sh"
+          find "$pkg" -type f -exec chmod 644 {} +
+          chmod 755 "$pkg/custom-cont-init.d/nightseed.sh"
+          find "$pkg" -exec touch -h -d '2000-01-01T00:00:00Z' {} +
+          (cd "$pkg" && find . -type f | LC_ALL=C sort | TZ=UTC zip -q -X -@ "$GITHUB_WORKSPACE/Nightseed-WebUI.zip")
 
       - name: Publish a release if any file differs from the latest one
         run: |
@@ -83,12 +107,14 @@ jobs:
             if [ -n "$prev" ]; then
               echo "Changes since $prev:"
               echo
-              git log --format='- %s' "$prev..HEAD" -- source tools/build_theme.py $ASSETS || true
+              git log --format='- %s' "$prev..HEAD" -- source tools/build_theme.py webui $THEMES || true
             else
               echo "First release."
             fi
             echo
             echo "To install, download one of the theme files below (see [Four versions](https://github.com/$GITHUB_REPOSITORY#four-versions)) and follow the [install steps](https://github.com/$GITHUB_REPOSITORY#install)."
+            echo
+            echo "For the WebUI (qBittorrent in Docker), download **Nightseed-WebUI.zip** and follow [the WebUI steps](https://github.com/$GITHUB_REPOSITORY/tree/main/webui#install)."
           } > "$RUNNER_TEMP/notes.md"
 
           # $ASSETS is unquoted on purpose: one argument per file

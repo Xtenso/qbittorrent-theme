@@ -1,0 +1,10 @@
+/* ====================================================== Nightseed OLED == */
+/* The canvas and the transfer list go true black, so an OLED screen switches
+   those pixels off. The cards keep their grey and stand out a little more. */
+
+:root:is(.dark, :not(.dark)) {
+    --ns-canvas: #000000;
+    --ns-alt-row: #040404;
+    /* a 5% white groove all but vanishes on black */
+    --ns-groove: rgb(255 255 255 / 0.118);
+}

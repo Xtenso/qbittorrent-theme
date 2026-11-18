@@ -1,0 +1,26 @@
+/* ============================================== Nightseed Alternative == */
+/* State icons at the start of each row, and progress bars in each state's
+   colour. Downloading and seeding use a darker green and blue so the white
+   percentage stays readable on a filled bar. */
+
+:root {
+    --ns-row-dl: #279A4A;
+    --ns-row-up: #308CCE;
+}
+
+#transferList .stateIcon:not(.stateIconColumn) {
+    background-size: 16px;
+    margin-left: 0;
+    padding-left: 24px;
+}
+
+#transferList td img.stateIcon {
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: -3px;
+    width: 16px;
+}
+
+#transferList tbody tr {
+    --ns-bar-fill: var(--ns-state-colour);
+}

@@ -99,6 +99,15 @@ Each release has four theme files, built from the same source:
 
 If you delete or move the theme file later, qBittorrent falls back to its default look.
 
+## WebUI
+
+Running qBittorrent headless, in Docker or on a NAS? [`webui/`](webui) has
+Nightseed for the browser interface too: Nightseed, Alternative, OLED, and Auto
+versions of Nightseed and Alternative that add a light design for the WebUI's
+light mode. A start-up script for the
+linuxserver Docker image rebuilds it for each qBittorrent version. See
+[its README](webui/README.md).
+
 ## Known limitations
 
 - **Progress bar colours**: in **Nightseed** the bars stay green whatever the

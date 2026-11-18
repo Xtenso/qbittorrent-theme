@@ -1,0 +1,8 @@
+/* ---------------------------------------------------------- progress bars */
+/* always the green gradient, grey when the torrent is stopped or errored */
+
+#transferList tr:has(:is(.stateStoppedDL, .stateStoppedUP, .stateError,
+        img.stateIcon:is([src$="stopped.svg"], [src$="checked-completed.svg"], [src$="error.svg"]))) {
+    --ns-bar-fill: var(--ns-progress-off);
+    --ns-bar-text: var(--ns-progress-off-text);
+}

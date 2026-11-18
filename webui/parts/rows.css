@@ -1,0 +1,42 @@
+/* ---------------------------------------------------- row colours by state */
+/* green downloading, blue seeding, purple completed, grey stopped, red errored.
+   Each row's state is read from its state class (qBittorrent 5.1+) or from the
+   name of its state image (5.0), and published as custom properties that the
+   row text and the progress bar (and the version parts) read:
+     --ns-state-colour   the state's colour
+     --ns-state-off      set only for stopped / errored torrents */
+
+:root {
+    --ns-row-dl: var(--ns-green);
+    --ns-row-up: var(--ns-blue);
+}
+
+#transferList tr:has(:is(.stateDownloading, .stateStalledDL, .stateMoving, .stateChecking, .stateQueued,
+        img.stateIcon:is([src$="downloading.svg"], [src$="stalledDL.svg"], [src$="set-location.svg"],
+                         [src$="force-recheck.svg"], [src$="queued.svg"]))) {
+    --ns-state-colour: var(--ns-row-dl);
+}
+
+#transferList tr:has(:is(.stateUploading, .stateStalledUP,
+        img.stateIcon:is([src$="upload.svg"], [src$="stalledUP.svg"]))) {
+    --ns-state-colour: var(--ns-row-up);
+}
+
+#transferList tr:has(:is(.stateStoppedDL, img.stateIcon[src$="stopped.svg"])) {
+    --ns-state-colour: var(--ns-grey);
+    --ns-state-off: 1;
+}
+
+#transferList tr:has(:is(.stateStoppedUP, img.stateIcon[src$="checked-completed.svg"])) {
+    --ns-state-colour: var(--ns-purple);
+    --ns-state-off: 1;
+}
+
+#transferList tr:has(:is(.stateError, img.stateIcon[src$="error.svg"])) {
+    --ns-state-colour: var(--ns-red);
+    --ns-state-off: 1;
+}
+
+#transferList tbody tr {
+    color: var(--ns-state-colour, inherit);
+}

@@ -1,0 +1,1269 @@
+/* ==========================================================================
+   Nightseed for the qBittorrent WebUI: shared core (nightseed.sh adds a version's parts)
+   A port of Xtenso/qbittorrent-theme (MIT) from Qt stylesheets to the browser.
+   Loaded after the stock stylesheets, so it only overrides.
+
+   Tokens (same as the desktop theme)
+     canvas      #121212   page background, transfer list
+     card        #1E1E1E   header (menus + toolbar), sidebar, details panel, dialogs
+     input       #2E2E2E   text boxes, drop-downs, buttons, menus
+     selection   #333333   selected rows, filters and tabs
+     text        #FFFFFF / secondary #A1A1A6 / disabled #6E6E73
+     accent      #1C7C3E -> #279A4A   progress gradient
+     controls    #356EBF   checkboxes, radios, sliders
+     radii       12 cards, 9 inputs, 8 row / item highlights
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- palette */
+
+/* :root:is(...) out-ranks the stock :root.dark rules, so the theme stays dark
+   whatever colour scheme the browser or the WebUI asks for */
+:root:is(.dark, :not(.dark)) {
+    --ns-canvas: #121212;
+    --ns-card: #1E1E1E;
+    --ns-card-raised: #252525;
+    --ns-input: #2E2E2E;
+    --ns-input-hover: #3D3D3D;
+    --ns-selection: #333333;
+    --ns-hover: #1C1C1C;
+    --ns-divider: #2A2A2A;
+    --ns-text: #FFFFFF;
+    --ns-text-2: #A1A1A6;
+    --ns-text-off: #6E6E73;
+    --ns-green: #4CD964;
+    --ns-blue: #56CCF2;
+    --ns-purple: #A371F7;
+    --ns-grey: #8E8E93;
+    --ns-red: #FF453A;
+    --ns-orange: #FF9F0A;
+    --ns-control: #356EBF;
+    --ns-progress: linear-gradient(90deg, #1C7C3E, #279A4A);
+    --ns-progress-off: linear-gradient(90deg, #3A3A3E, #4C4C52);
+    --ns-progress-off-text: #C7C7CC;
+    --ns-groove: rgb(255 255 255 / 0.05);
+    --ns-alt-row: #161616;
+    --ns-text-soft: #D8D8D8;
+    --ns-text-3: #C5C5C5;
+    --ns-separator: #3A3A3A;
+    --ns-scroll: #3C3C3C;
+    --ns-scroll-hover: #4A4A4A;
+    --ns-focus-border: #4A4A4A;
+    --ns-pressed: #474747;
+    --ns-tool-hover: #2B2B2B;
+    --ns-tool-pressed: #363636;
+    --ns-tab-hover: #2A2A2A;
+    --ns-filter-hover: #262626;
+    --ns-ring: #262626;
+    --ns-popup-shadow: rgb(0 0 0 / 0.45);
+    --ns-dialog-shadow: rgb(0 0 0 / 0.6);
+    --ns-login-shadow: rgb(0 0 0 / 0.5);
+    --ns-overlay: #000000;
+    --ns-log-info: #64D2FF;
+    --ns-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5C5C5'%3E%3Cpath d='M8.12 9.29 12 13.17l3.88-3.88a1 1 0 1 1 1.41 1.41l-4.59 4.59a1 1 0 0 1-1.41 0L6.7 10.7a1 1 0 0 1 1.42-1.41z'/%3E%3C/svg%3E");
+
+    --color-accent-blue: var(--ns-control);
+    --color-text-blue: #72B4F5;
+    --color-text-orange: var(--ns-orange);
+    --color-text-red: var(--ns-red);
+    --color-text-green: var(--ns-green);
+    --color-text-white: #FFFFFF;
+    --color-text-disabled: var(--ns-text-off);
+    --color-text-default: var(--ns-text);
+    --color-background-primary: var(--ns-canvas);
+    --color-background-blue: var(--ns-selection);
+    --color-background-popup: var(--ns-card);
+    --color-background-default: var(--ns-card);
+    --color-background-hover: var(--ns-hover);
+    --color-border-blue: var(--ns-input-hover);
+    --color-border-default: var(--ns-divider);
+    /* the icons are already colour-coded, so hover / selection no longer whitens them */
+    --color-icon-hover: none;
+
+    color-scheme: dark;
+    accent-color: var(--ns-control);
+}
+
+:root:is(.dark, :not(.dark)) #torrentTrackersTableDiv tr {
+    --color-tracker-disabled: var(--ns-grey);
+    --color-tracker-not-contacted: var(--ns-orange);
+    --color-tracker-working: var(--ns-green);
+    --color-tracker-updating: var(--ns-blue);
+    --color-tracker-not-working: var(--ns-red);
+}
+
+html,
+body {
+    background-color: var(--ns-canvas);
+    color: var(--ns-text);
+}
+
+body,
+#desktopFooter,
+#desktopNavbar ul,
+.mochaContentWrapper,
+:root .tab-menu,
+.panel-header h2 {
+    font-family: "Inter", "SF Pro Text", -apple-system, "Segoe UI Variable Text", "Segoe UI",
+        "Helvetica Neue", Cantarell, "Noto Sans", sans-serif;
+}
+
+body {
+    font-size: 13px;
+}
+
+::selection {
+    background-color: #3A7BD5;
+    color: #FFFFFF;
+}
+
+a {
+    color: var(--ns-blue);
+}
+
+/* ------------------------------------------------------------- scrollbars */
+
+/* only where there's a mouse: styled webkit scrollbars stop touch screens from
+   using their own thin, fading ones and leave grey bars on every list */
+@media (hover: hover) and (pointer: fine) {
+    * {
+        scrollbar-color: var(--ns-scroll) transparent;
+    }
+
+    ::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--ns-scroll);
+        background-clip: content-box;
+        border: 2px solid transparent;
+        border-radius: 6px;
+        min-height: 36px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--ns-scroll-hover);
+    }
+}
+
+/* touch screens: no scrollbars at all. The stock WebUI's "thin" scrollbars, and
+   on some phones even the browser's own, stay on screen as grey bars; lists still
+   scroll with a swipe */
+@media (pointer: coarse) {
+    * {
+        scrollbar-width: none !important;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* tab strips scroll sideways when they don't fit, without a visible bar */
+:root .tab-menu {
+    scrollbar-width: none;
+}
+
+:root .tab-menu::-webkit-scrollbar {
+    display: none;
+}
+
+/* ------------------------------------------------------------------ inputs */
+
+input[type="search"],
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="url"],
+input[type="email"],
+input:not([type]),
+textarea,
+select {
+    background-color: var(--ns-input);
+    border: 1px solid var(--ns-input);
+    border-radius: 9px;
+    color: var(--ns-text);
+    outline: none;
+    padding: 4px 8px;
+    transition: border-color 0.12s, background-color 0.12s;
+}
+
+input:is([type="search"], [type="text"], [type="number"], [type="password"], [type="url"], [type="email"], :not([type])):hover,
+textarea:hover,
+select:hover {
+    border-color: var(--ns-input-hover);
+}
+
+input:is([type="search"], [type="text"], [type="number"], [type="password"], [type="url"], [type="email"], :not([type])):focus,
+textarea:focus,
+select:focus {
+    background-color: var(--ns-selection);
+    border-color: var(--ns-focus-border);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+    color: var(--ns-text-off);
+    opacity: 0.7;
+}
+
+select {
+    appearance: none;
+    background-image: var(--ns-select-arrow);
+    background-position: right 6px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 26px;
+}
+
+select[multiple],
+select[size]:not([size="1"]) {
+    background-image: none;
+    padding-right: 8px;
+}
+
+option {
+    background-color: var(--ns-input);
+    color: var(--ns-text);
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+button {
+    background-color: var(--ns-input);
+    border: 1px solid var(--ns-input);
+    border-radius: 9px;
+    color: var(--ns-text);
+    cursor: pointer;
+    padding: 5px 14px;
+    transition: background-color 0.12s;
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):hover:not(:disabled),
+button:hover:not(:disabled) {
+    background-color: var(--ns-input-hover);
+    border-color: var(--ns-input-hover);
+}
+
+input:is([type="button"], [type="submit"], [type="reset"]):active:not(:disabled),
+button:active:not(:disabled) {
+    background-color: var(--ns-pressed);
+}
+
+:focus-visible {
+    outline: 2px solid #72B4F5;
+    outline-offset: 1px;
+}
+
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+    accent-color: var(--ns-control);
+}
+
+fieldset {
+    background-color: var(--ns-card-raised);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px 12px;
+}
+
+legend {
+    background-color: var(--ns-card-raised);
+    border-radius: 8px;
+    color: var(--ns-text);
+    font-weight: 600;
+    padding: 3px 10px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--ns-divider);
+}
+
+/* ============================================================== HEADER == */
+
+/* The menu bar and the toolbar form one floating card. #desktopHeader keeps
+   its height in offsetHeight (MochaUI sizes the page from it), so the gap is
+   padding, not margin. */
+#desktopHeader {
+    background-color: var(--ns-canvas);
+    padding: 8px 8px 0;
+}
+
+#desktopNavbar {
+    background-color: var(--ns-card);
+    border-radius: 12px 12px 0 0;
+    padding: 6px 8px 0;
+}
+
+#desktopNavbar > ul > li > a {
+    border-radius: 8px;
+    color: var(--ns-text-soft);
+    padding: 5px 10px;
+}
+
+#desktopNavbar > ul > li > a:hover,
+#desktopNavbar > ul > li:hover > a {
+    background-color: var(--ns-input);
+    color: var(--ns-text);
+}
+
+#desktopNavbar li:hover {
+    background-color: transparent;
+}
+
+/* drop-down menus */
+#desktopNavbar li ul {
+    background-color: var(--ns-input);
+    border: 1px solid var(--ns-input);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px var(--ns-popup-shadow);
+    padding: 6px;
+}
+
+#desktopNavbar li ul li a,
+#desktopNavbar li ul li div.anchor {
+    border-radius: 8px;
+    color: var(--ns-text);
+    margin: 1px 0;
+}
+
+#desktopNavbar li ul li a:hover,
+#desktopNavbar li ul li div.anchor:hover {
+    background-color: var(--ns-input-hover);
+    color: var(--ns-text);
+}
+
+#desktopNavbar li.divider,
+li.divider {
+    border-top: 1px solid var(--ns-separator);
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+/* toolbar */
+#mochaToolbar {
+    background-color: var(--ns-card);
+    border-radius: 0 0 12px 12px;
+    margin-top: 0;
+    padding: 6px 8px 8px 6px;
+}
+
+.mochaToolButton {
+    border-radius: 8px;
+    box-sizing: content-box;
+    margin-right: 2px;
+    padding: 5px;
+    transition: background-color 0.12s;
+}
+
+#mochaToolbar a:hover .mochaToolButton,
+#mochaToolbar label:hover .mochaToolButton {
+    background-color: var(--ns-tool-hover);
+}
+
+#mochaToolbar a:active .mochaToolButton,
+#mochaToolbar label:active .mochaToolButton {
+    background-color: var(--ns-tool-pressed);
+}
+
+#mochaToolbar .divider {
+    background: linear-gradient(var(--ns-input), var(--ns-input)) left 5px top 9px / 1px 22px no-repeat;
+    padding-left: 15px;
+    padding-top: 0;
+}
+
+/* torrent filter box */
+#torrentsFilterToolbar {
+    margin-left: 8px;
+    margin-top: 3px;
+}
+
+#torrentsFilterInput {
+    background-color: var(--ns-input);
+    background-position: 8px center;
+    background-size: 18px;
+    border: 1px solid var(--ns-input);
+    border-radius: 9px;
+    min-width: 230px;
+    padding: 6px 10px 6px 32px;
+}
+
+#torrentsFilterRegexBox + label,
+#torrentsFilterRegexBox:checked + label {
+    background-color: var(--ns-input);
+    background-size: 18px;
+    border: 1px solid var(--ns-input);
+    border-radius: 9px;
+    height: 32px;
+    margin-bottom: -11px;
+    width: 32px;
+}
+
+#torrentsFilterRegexBox:checked + label {
+    background-color: var(--ns-control);
+    border-color: var(--ns-control);
+}
+
+/* "Filter by:" label kept but quiet */
+#torrentsFilterToolbar label[for="torrentsFilterSelect"] {
+    color: var(--ns-text-2);
+    margin-left: 6px;
+}
+
+#torrentsFilterSelect {
+    color: var(--ns-text-3);
+    padding: 6px 28px 6px 10px;
+}
+
+/* Transfers / Search / RSS / Log switcher: pill tabs. MochaUI inserts Tabs.css
+   again whenever it opens a window with tabs, after this file, so these rules
+   carry :root to win on specificity rather than on order */
+#mainWindowTabs {
+    margin: 4px 2px 0 0;
+}
+
+:root .tab-menu {
+    font-size: 13px;
+    gap: 4px;
+}
+
+:root .tab-menu li a,
+:root .tab-menu li:first-child a {
+    background-color: transparent;
+    border-radius: 8px;
+    color: var(--ns-text-2);
+    margin-left: 0;
+    padding: 6px 12px;
+    transition: background-color 0.12s, color 0.12s;
+}
+
+:root .tab-menu li:hover a {
+    background-color: var(--ns-tab-hover);
+    color: var(--ns-text);
+}
+
+:root .tab-menu li.selected a {
+    background-color: var(--ns-selection);
+    color: var(--ns-text);
+}
+
+/* ============================================================ PAGE BODY == */
+
+/* top / bottom margins are subtracted by MochaUI when it sizes the page */
+#pageWrapper {
+    border: none;
+    margin: 8px 0 6px;
+}
+
+.column,
+.panel,
+.panel-header,
+.panelWrapper {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+/* the borders stay (transparent): MochaUI shares out the height in proportion to
+   each panel's offsetHeight, and an empty panel with no border starts at 0 */
+
+/* column splitters become plain 8px gaps */
+.columnHandle,
+#filtersColumn_handle {
+    background: transparent;
+    border: none;
+}
+
+.columnHandle:hover {
+    background: linear-gradient(var(--ns-input-hover), var(--ns-input-hover)) center / 2px 40px no-repeat;
+}
+
+.horizontalHandle {
+    background: transparent;
+    height: 8px;
+}
+
+.horizontalHandle .handleIcon {
+    background: none;
+}
+
+.horizontalHandle:hover .handleIcon {
+    background: linear-gradient(var(--ns-input-hover), var(--ns-input-hover)) center / 40px 2px no-repeat;
+    height: 8px;
+}
+
+/* ------------------------------------------------- sidebar (filters) card */
+
+/* MochaUI fixes every column's size inline, so the cards are drawn with a
+   pseudo-element instead of margins: the boxes keep their geometry. */
+#filtersColumn,
+.panelWrapper:has(> #propertiesPanel),
+.panelWrapper:has(> .panel > #propertiesPanel) {
+    position: relative;
+}
+
+#filtersColumn::before {
+    background-color: var(--ns-card);
+    border-radius: 12px;
+    content: "";
+    inset: 0 0 0 8px;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+#filtersColumn > * {
+    position: relative;
+    z-index: 1;
+}
+
+#Filters {
+    background: transparent;
+    padding: 6px 6px 6px 14px;
+}
+
+.filterTitle {
+    color: var(--ns-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 10px 0 4px 6px;
+    text-transform: none;
+}
+
+.filterTitle:first-child {
+    padding-top: 4px;
+}
+
+.filterTitle img {
+    opacity: 0.6;
+}
+
+ul.filterList span.link {
+    border-radius: 8px;
+    color: var(--ns-text-soft);
+    margin: 1px 0;
+    padding: 5px 8px;
+}
+
+ul.filterList span.link:hover {
+    background-color: var(--ns-filter-hover);
+    color: var(--ns-text);
+}
+
+.selectedFilter > span.link,
+ul.filterList .selectedFilter > span.link:hover {
+    background-color: var(--ns-selection);
+    color: var(--ns-text);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------- transfer list */
+
+.dynamicTableFixedHeaderDiv table,
+#torrentsTableFixedHeaderDiv,
+#propertiesPanel .dynamicTableFixedHeaderDiv {
+    background-color: var(--ns-canvas);
+    border-bottom: none;
+}
+
+.dynamicTable th {
+    border-right: 1px solid var(--ns-input);
+    color: var(--ns-text-2);
+    font-weight: 500;
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.dynamicTable th:last-child {
+    border-right: none;
+}
+
+.dynamicTable th:hover {
+    color: var(--ns-text);
+}
+
+.dynamicTable th.sorted {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A1A1A6'%3E%3Cpath d='M8.12 14.71 12 10.83l3.88 3.88a1 1 0 1 0 1.41-1.41L12.7 8.71a1 1 0 0 0-1.41 0L6.7 13.3a1 1 0 0 0 1.42 1.41z'/%3E%3C/svg%3E");
+    background-position: right 4px center;
+    background-size: 14px;
+    color: var(--ns-text);
+}
+
+.dynamicTable th.sorted.reverse {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A1A1A6'%3E%3Cpath d='M8.12 9.29 12 13.17l3.88-3.88a1 1 0 1 1 1.41 1.41l-4.59 4.59a1 1 0 0 1-1.41 0L6.7 10.7a1 1 0 0 1 1.42-1.41z'/%3E%3C/svg%3E");
+}
+
+.dynamicTable td {
+    padding: 6px 8px;
+}
+
+/* the transfer list draws its rows at a fixed height (virtual scrolling), so its
+   cells keep the stock vertical padding and only get more room at the sides */
+#transferList .dynamicTable td {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* rows are painted cell by cell so the highlight can have rounded ends */
+.altRowColors tbody tr:nth-child(odd of :not(.invisible)) {
+    background-color: transparent;
+}
+
+.altRowColors tbody tr:nth-child(odd of :not(.invisible)) > td {
+    background-color: var(--ns-alt-row);
+}
+
+.dynamicTableDiv table.dynamicTable tbody tr,
+.dynamicTableDiv table.dynamicTable tbody tr:hover,
+.dynamicTableDiv table.dynamicTable tbody tr.selected {
+    background-color: transparent;
+    color: inherit;
+}
+
+.dynamicTableDiv table.dynamicTable tbody tr:hover > td {
+    background-color: var(--ns-hover);
+}
+
+.dynamicTableDiv table.dynamicTable tbody tr.selected > td {
+    background-color: var(--ns-selection);
+    color: var(--ns-text);
+}
+
+.dynamicTable tbody tr > td:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.dynamicTable tbody tr > td:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+#transferList_pad,
+#transferList .pad {
+    padding: 0 8px 0 0;
+}
+
+/* row colours by state: see the version files under parts/ */
+
+#transferList tr.selected:has(.stateIcon) > td {
+    color: inherit;
+}
+
+/* progress bars: rounded, green gradient. The bar lives in a shadow root and is
+   styled inline, so only the host and the custom properties it reads can be
+   changed from here. */
+progress-bar {
+    --color-background-blue: var(--ns-bar-fill, var(--ns-progress));
+    --color-background-default: var(--ns-groove);
+    --color-text-white: var(--ns-bar-text, #FFFFFF);
+    --color-text-default: var(--ns-text-soft);
+    border: none !important;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+/* qBittorrent 5.0 / 5.1 build their bars from plain elements, styled inline */
+.progressbar_wrapper {
+    border: none !important;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+.progressbar_dark {
+    background: var(--ns-bar-fill, var(--ns-progress)) !important;
+    color: var(--ns-bar-text, #FFFFFF) !important;
+}
+
+.progressbar_light {
+    background: var(--ns-groove) !important;
+    color: var(--ns-text-soft) !important;
+}
+
+/* ---------------------------------------------------- details panel card */
+
+.panelWrapper:has(> #propertiesPanel)::before,
+.panelWrapper:has(> .panel > #propertiesPanel)::before {
+    background-color: var(--ns-card);
+    border-radius: 12px;
+    content: "";
+    inset: 0 8px 0 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+.panelWrapper:has(#propertiesPanel) > * {
+    position: relative;
+    z-index: 1;
+}
+
+#propertiesPanel_header {
+    height: 40px;
+    padding: 6px 14px 0 6px;
+}
+
+#propertiesPanel,
+#properties,
+.propertiesTabContent,
+#propGeneral {
+    background-color: transparent;
+}
+
+#propertiesPanel {
+    padding: 0 14px 6px 6px;
+}
+
+#propertiesTabs .tab-menu li a,
+#propertiesPanel_header .tab-menu li a {
+    padding: 6px 12px;
+}
+
+#propertiesPanel table:not(.dynamicTable) td {
+    padding: 3px 6px;
+}
+
+#propertiesPanel fieldset {
+    background-color: var(--ns-card-raised);
+    margin-top: 6px;
+}
+
+#propertiesPanel fieldset legend {
+    background-color: transparent;
+    color: var(--ns-text-2);
+    padding: 0 4px;
+}
+
+#propertiesPanel .dynamicTableFixedHeaderDiv table {
+    background-color: var(--ns-card);
+}
+
+.panel-collapse,
+.panel-expand {
+    border-radius: 6px;
+    opacity: 0.75;
+}
+
+.panel-collapse:hover,
+.panel-expand:hover {
+    opacity: 1;
+}
+
+/* pieces bars: corners rounded at the host (their canvas stays square inside) */
+pieces-bar,
+#progress > div,
+#piecesbar,
+[id^="piecesbar_"] {
+    border: none !important;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.iconWrapper {
+    border-radius: 8px;
+}
+
+.iconWrapper:hover {
+    background-color: var(--ns-input);
+    border-color: transparent;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+#desktopFooterWrapper {
+    background-color: var(--ns-canvas);
+}
+
+#desktopFooter {
+    color: var(--ns-text-2);
+    font-size: 12px;
+    padding: 3px 16px 2px;
+}
+
+#desktopFooter td {
+    vertical-align: middle;
+}
+
+#desktopFooter .statusBarSeparator,
+#desktopFooter td.statusBarSeparator {
+    background: linear-gradient(var(--ns-input), var(--ns-input)) center / 1px 14px no-repeat;
+    width: 16px;
+}
+
+#desktopFooter img {
+    vertical-align: middle;
+}
+
+/* ========================================================== POPUP MENUS == */
+
+.contextMenu,
+.contextMenu li ul {
+    background-color: var(--ns-input);
+    border: 1px solid var(--ns-input);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px var(--ns-popup-shadow);
+    padding: 6px;
+}
+
+.contextMenu li ul {
+    margin: -35px 0 0 calc(100% + 6px);
+}
+
+.contextMenu li a {
+    border-radius: 8px;
+    color: var(--ns-text);
+    margin: 1px 0;
+    padding: 6px 28px 6px 10px;
+}
+
+.contextMenu li a:hover {
+    background-color: var(--ns-input-hover);
+    color: var(--ns-text);
+}
+
+.contextMenu .separator {
+    border-top: 1px solid var(--ns-separator);
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+.contextMenu .separatorBottom {
+    border-bottom: 1px solid var(--ns-separator);
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.contextMenu li:not(.disabled) .arrow-right::after {
+    border-color: var(--ns-grey);
+    right: 10px;
+}
+
+.contextMenu li.disabled {
+    opacity: 1;
+}
+
+.contextMenu li.disabled a {
+    color: var(--ns-text-off);
+}
+
+#contextCategoryList img.highlightedCategoryIcon {
+    background-color: var(--ns-control);
+    border-radius: 4px;
+}
+
+/* ============================================================== DIALOGS == */
+
+.mocha,
+.mochaOverlay {
+    background-color: var(--ns-card);
+    border-radius: 12px;
+}
+
+/* the shadow goes on the window only: the overlay inside it is shorter, and its
+   shadow would fall across the bottom of the dialog */
+.mocha {
+    box-shadow: 0 0 0 1px var(--ns-ring), 0 18px 50px var(--ns-dialog-shadow);
+}
+
+.mochaOverlay {
+    box-shadow: none;
+}
+
+.mochaTitlebar {
+    background-color: var(--ns-card);
+    border-radius: 12px 12px 0 0;
+}
+
+.mochaTitlebar h3 {
+    color: var(--ns-text);
+    font-size: 13px;
+    font-weight: 600;
+    /* the title bar is a fixed 25px tall */
+    padding: 5px 14px 4px;
+}
+
+.mochaContentBorder {
+    border: none;
+}
+
+.mochaContentWrapper,
+.mochaToolbarWrapper {
+    background-color: var(--ns-card);
+}
+
+.mochaToolbar {
+    border-top: none;
+}
+
+div.mochaToolbarWrapper.bottom {
+    border-bottom: none;
+}
+
+.mochaContentWrapper {
+    font-size: 13px;
+}
+
+.mocha .cornerSE {
+    background-color: transparent;
+}
+
+.mochaControls {
+    right: 8px;
+    top: 4px;
+}
+
+.mochaCloseButton,
+.mochaMaximizeButton,
+.mochaMinimizeButton {
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+}
+
+.mochaCloseButton:hover,
+.mochaMaximizeButton:hover,
+.mochaMinimizeButton:hover {
+    background-color: var(--ns-input);
+}
+
+.mochaCloseButton::before,
+.mochaCloseButton::after,
+.mochaMaximizeButton::before,
+.mochaMaximizeButton::after,
+.mochaMinimizeButton::before {
+    background-color: var(--ns-text-2);
+}
+
+#modalOverlay {
+    background-color: var(--ns-overlay);
+}
+
+/* tables inside dialogs and the options pages are cards */
+.mochaContent .dynamicTableDiv,
+.mochaContent table.dynamicTable {
+    background-color: var(--ns-card);
+    border-radius: 12px;
+}
+
+.mochaContent .dynamicTableFixedHeaderDiv table {
+    background-color: var(--ns-card);
+}
+
+/* options: the page list on the left */
+#preferencesTabs .tab-menu,
+.mochaToolbar .tab-menu {
+    gap: 4px;
+    padding: 6px 8px;
+}
+
+/* the dialog pages that open in their own frame: same card colour as the window
+   around them, and the stock text size, because qBittorrent sizes those frames
+   for it */
+html:not(:has(#desktop, #loginform)),
+body:not(:has(#desktop, #loginform)) {
+    background-color: var(--ns-card);
+    font-size: 12px;
+}
+
+body:not(:has(#desktop, #loginform)) :is(input:is([type="button"], [type="submit"], [type="reset"]), button) {
+    padding: 4px 14px;
+}
+
+body:not(:has(#desktop, #loginform)) fieldset {
+    background-color: var(--ns-card-raised);
+}
+
+/* ========================================================= SEARCH / RSS / LOG */
+
+#searchResultsTableContainer,
+#rssDetailsView,
+#logView {
+    background-color: transparent;
+}
+
+#rssDetailsView {
+    color: var(--ns-text);
+}
+
+#searchPattern,
+#searchInNameFilter,
+#filterTextInput {
+    border-radius: 9px;
+}
+
+.logNormal { color: var(--ns-text); }
+.logInfo { color: var(--ns-log-info); }
+.logWarning { color: var(--ns-orange); }
+.logCritical,
+.peerBanned { color: var(--ns-red); }
+
+/* ============================================================== LOGIN == */
+
+body:has(#loginform) {
+    align-items: center;
+    background-color: var(--ns-canvas);
+    color: var(--ns-text);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+body:has(#loginform) #main {
+    background-color: var(--ns-card);
+    border-radius: 16px;
+    box-shadow: 0 0 0 1px var(--ns-ring), 0 24px 60px var(--ns-login-shadow);
+    padding: 32px 36px 28px;
+    width: min(360px, calc(100vw - 32px));
+}
+
+body:has(#loginform) #main h1 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+body:has(#loginform) #logo img {
+    height: 6em;
+}
+
+body:has(#loginform) #formplace {
+    padding: 12px 0 0;
+    width: 100%;
+}
+
+body:has(#loginform) label {
+    color: var(--ns-text-2);
+    font-size: 12px;
+}
+
+body:has(#loginform) .login-input {
+    font-size: 14px;
+    margin: 4px 0 10px;
+    padding: 9px 12px;
+}
+
+#loginButton {
+    background-image: var(--ns-progress);
+    border: none;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 6px;
+    padding: 10px;
+}
+
+#loginButton:hover {
+    filter: brightness(1.1);
+}
+
+#error_msg {
+    color: var(--ns-red);
+}
+
+/* ================================================================ PHONES == */
+
+/* the header collapses to three short rows: toolbar buttons, the
+   Transfers / Search / RSS tabs, and the filter box */
+@media (max-width: 760px) {
+    /* the stock 400px minimum is wider than most phones, so the page overflowed */
+    #desktop {
+        min-width: 0;
+    }
+
+    #desktopHeader {
+        padding: 6px 6px 0;
+    }
+
+    #desktopNavbar {
+        padding: 4px 6px 0;
+    }
+
+    #desktopNavbar > ul > li > a {
+        padding: 5px 8px;
+    }
+
+    #mochaToolbar {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 0;
+        padding: 4px 6px 8px;
+    }
+
+    /* the toolbar starts with two &nbsp; text characters that would take a slot */
+    #mochaToolbar {
+        font-size: 0;
+    }
+
+    #mainWindowTabs,
+    #torrentsFilterToolbar {
+        font-size: 13px;
+    }
+
+    /* the buttons share the row's width, so they always fit on one line */
+    #mochaToolbar > #queueingButtons {
+        display: contents;
+    }
+
+    #mochaToolbar > a,
+    #mochaToolbar > #queueingButtons > a,
+    #mochaToolbar > div#uploadButton {
+        display: flex;
+        flex: 1 0 auto;
+        justify-content: center;
+        order: 1;
+    }
+
+    #mochaToolbar .mochaToolButton {
+        height: 20px;
+        margin-right: 0;
+        padding: 4px;
+        width: 20px;
+    }
+
+    #mochaToolbar .divider {
+        background: none;
+        padding-left: 0;
+    }
+
+    #mainWindowTabs {
+        flex: 0 0 100%;
+        float: none;
+        margin: 2px 0 0;
+        order: 2;
+    }
+
+    :root #mainWindowTabsList.tab-menu {
+        font-size: 13px;
+    }
+
+    #torrentsFilterToolbar {
+        align-items: center;
+        display: flex;
+        flex: 0 0 100%;
+        gap: 6px;
+        margin: 2px 0 0;
+        min-width: 0;
+        order: 3;
+    }
+
+    #torrentsFilterToolbar.invisible {
+        display: none;
+    }
+
+    #torrentsFilterInput {
+        flex: 1 1 0;
+        min-width: 0;
+        width: 0;
+    }
+
+    #torrentsFilterRegexBox + label,
+    #torrentsFilterRegexBox:checked + label {
+        flex: none;
+        margin-bottom: 0;
+    }
+
+    #torrentsFilterToolbar label[for="torrentsFilterSelect"] {
+        display: none;
+    }
+
+    #torrentsFilterSelect {
+        flex: none;
+        max-width: 7.5em;
+    }
+
+    /* tighter gaps around the cards */
+    #pageWrapper {
+        margin: 6px 0 4px;
+    }
+
+    #filtersColumn::before {
+        inset: 0 0 0 6px;
+    }
+
+    #Filters {
+        padding-left: 10px;
+    }
+
+    #propertiesPanel_header {
+        padding: 6px 8px 0 4px;
+    }
+
+    /* the details tabs don't fit: the strip stops short of the collapse button
+       and fades out at its right edge, so it reads as "swipe for more"; the
+       end padding lets the last tab scroll fully clear of the fade */
+    #propertiesPanel_headerContent .tab-menu {
+        margin-right: 8px;
+        -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+        mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+        padding-right: 28px;
+    }
+
+    #propertiesPanel_headerCollapseBox {
+        margin-top: 4px;
+    }
+
+    #propertiesPanel {
+        padding: 0 8px 6px 4px;
+    }
+
+    .panelWrapper:has(> #propertiesPanel)::before,
+    .panelWrapper:has(> .panel > #propertiesPanel)::before {
+        inset: 0 6px 0 0;
+    }
+
+    #desktopFooter {
+        padding: 3px 8px 2px;
+    }
+
+    /* the General tab lays out three label / value pairs per row: on a phone
+       each pair gets its own line */
+    #propGeneral fieldset table {
+        display: block;
+    }
+
+    #propGeneral fieldset tbody {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+    }
+
+    #propGeneral fieldset tr {
+        display: contents;
+    }
+
+    #propGeneral fieldset td {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    #propGeneral fieldset td.generalLabel {
+        color: var(--ns-text-2);
+        padding-right: 12px;
+        text-align: left;
+        /* the stock 1px width (a table trick) would collapse the grid column */
+        width: auto;
+    }
+
+    #propGeneral fieldset td:empty:not([id]) {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

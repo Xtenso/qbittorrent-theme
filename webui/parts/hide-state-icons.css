@@ -1,0 +1,14 @@
+/* ------------------------------------------------------------ state icons */
+/* hidden in the Name column, as on the desktop: the row colour shows the state
+   (the separate status-icon column, if turned on, still shows them) */
+
+#transferList .stateIcon:not(.stateIconColumn) {
+    background-image: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+/* qBittorrent 5.0 draws the state as an image in the Name column */
+#transferList td img.stateIcon {
+    display: none;
+}
